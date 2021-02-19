@@ -21,7 +21,9 @@ S端：主要是服务端代码应用，可能会是多个垂直业务领域的�
 
 ## <a name="2">平台介绍</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp;致用网关平台是一个简易的API网关平台。旨在降低后端服务开发与前端调用的耦合性，实现接口开发标准化、统一化。
+致用网关平台是一个简易的API网关平台。旨在降低后端服务开发与前端调用的耦合性，实现接口开发标准化、统一化。
+
+<div>如果看不见图片，需要在hosts文件中添加：199.232.68.133 raw.githubusercontent.com   199.232.68.133 githubusercontent.com</div>
 <div><img src="https://github.com/zoomtech2021/api-gateway/raw/master/api-gateway-server/src/main/resources/static/images/gateway-design.png" width="800" height="600"/></div>
 
 ## <a name="3">平台特性</a>
@@ -43,7 +45,7 @@ S端：主要是服务端代码应用，可能会是多个垂直业务领域的�
 ## <a name="4">平台技术</a>
 * 服务端技术：springboot2.2.6、mysql5+、fastjson、druid、mybatis、logback。
 * 前端技术：jquery easyui
-* 中间件:apache-dubbo2.7.8、redis、alibaba sentinel、elastic-job、alibaba nacos、zoomkeeper
+* 中间件:apache-dubbo2.7.8、redis、alibaba sentinel、elastic-job、zoomkeeper
 
 
 
