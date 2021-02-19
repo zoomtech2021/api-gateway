@@ -163,7 +163,7 @@ api-gateway-server
 	* 初始化数据库脚本执行							
 	  api-gateway-dal/src/main/resources/sql/db-init.sql
 	* 修改初始化系统配置（mysql、redis、zk连接配置）					
-	  api-gateway-dal/src/main/resources/application.yml
+	  api-gateway-server/src/main/resources/application.yml
 	
 * 运行api-gateway-server模块下的com.zhiyong.gateway.server.Application类启动项目
 * 浏览器地址栏输入:  http://localhost:19002 进入网关管理后台 账号：admin/admin123
