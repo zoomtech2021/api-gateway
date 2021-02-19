@@ -45,7 +45,7 @@ S端：主要是服务端代码应用，可能会是多个垂直业务领域的�
 ## <a name="4">平台技术</a>
 * 服务端技术：springboot2.2.6、mysql5+、fastjson、druid、mybatis、logback。
 * 前端技术：jquery easyui
-* 中间件:apache-dubbo2.7.8、redis、alibaba sentinel、elastic-job、alibaba nacos、zoomkeeper
+* 中间件:apache-dubbo2.7.8、redis、alibaba sentinel、elastic-job、zoomkeeper
 
 
 
