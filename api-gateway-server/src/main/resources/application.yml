@@ -21,6 +21,7 @@ server:
   zookeeper: 192.168.16.246:2181
   mysql: 127.0.0.1:3306
   redis: 192.168.16.246
+  redis-port: 6379
   port: 19002
   ## 等待队列长度，默认100。
   tomcat:
@@ -60,7 +61,7 @@ spring:
     timeout: 30m
   redis:
     host: ${server.redis}
-    port: 6379
+    port: ${server.redis-port}
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.jdbc.Driver

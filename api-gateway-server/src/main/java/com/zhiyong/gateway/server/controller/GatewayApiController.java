@@ -1,28 +1,25 @@
 package com.zhiyong.gateway.server.controller;
 
 import com.zhiyong.gateway.biz.model.ApiRequest;
+import com.zhiyong.gateway.biz.model.ApiResult;
+import com.zhiyong.gateway.biz.service.MonitorService;
 import com.zhiyong.gateway.common.enums.ApiType;
+import com.zhiyong.gateway.common.enums.ErrorCode;
+import com.zhiyong.gateway.common.exception.GatewayException;
+import com.zhiyong.gateway.common.utils.CommonUtil;
+import com.zhiyong.gateway.server.context.ApiContext;
+import com.zhiyong.gateway.server.processor.ApiProcessorChain;
 import com.zhiyong.gateway.server.processor.CallbackProcessorChain;
 import java.util.concurrent.Executor;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.zhiyong.gateway.biz.model.ApiResult;
-import com.zhiyong.gateway.biz.service.MonitorService;
-import com.zhiyong.gateway.common.enums.ErrorCode;
-import com.zhiyong.gateway.common.exception.GatewayException;
-import com.zhiyong.gateway.common.utils.CommonUtil;
-import com.zhiyong.gateway.server.context.ApiContext;
-import com.zhiyong.gateway.server.processor.ApiProcessorChain;
 
 /**
  * @ClassName GatewayApiController
@@ -119,12 +116,7 @@ public class GatewayApiController {
      */
     private ApiResult handleException(ApiContext context, Exception ex) {
         ApiResult apiResult = null;
-        // session异常不需要添加errorCode.这样会导致前端显示错误信息时有问题.
-        if (ex instanceof BizSessionException) {
-            GatewayException ge = (GatewayException) ex;
-            apiResult = ApiResult.buildErrorResult(ge.getErrorCode().getState(), ex.getMessage());
-            LOGGER.warn("{} - 失败原因：{}", context.toString(), ge.getMessage());
-        } else if (ex instanceof GatewayException) {
+        if (ex instanceof GatewayException) {
             GatewayException ge = (GatewayException) ex;
             String errorMsg = ge.getErrorCode().getCode() + "：" + ge.getMessage();
             apiResult = ApiResult.buildErrorResult(ge.getErrorCode().getState(), errorMsg);

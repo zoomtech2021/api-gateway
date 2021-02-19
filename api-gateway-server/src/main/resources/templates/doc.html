@@ -11,7 +11,7 @@
 <h2>1 目标</h2>
 <p>为企业提供统一的对外的API入口，为接入方提供标准统一的接入方式，统一解决认证、鉴权、安全、服务路由，协议转换、参数映射、流控熔断、服务监控等通用能力，同时实现后端微服务和前端接口最大限度的解耦，为企业服务稳定运行保驾护航。</p>
 <h2>2 架构</h2>
-<p><img width="800" height="500" src="/static/images/gateway-design.png" /></p>
+<p><img width="800" height="500" src="/static/images/gateway-technical.jpg" /></p>
 <h2>3 模块</h2>
 <ul>
     <li>整个网关系统分为两部分：网关服务端和网关管理后台。</li>
@@ -209,13 +209,15 @@
 <p><code>{ &quot;requestId&quot;: &quot;268faee051da4f47a50d268937cbcbb5&quot;, &quot;code&quot;: 200, &quot;msg&quot;: null, &quot;data&quot;: { &quot;id&quot;: 100011 } }</code></p>
 <h2>第三方回调API地址</h2>
 <p><strong>网关回调API服务地址</strong>：http://open.zhiyong.com/router/callback/{method}?data=xxx  ,所有回调API根地址都一样。</p>
+
+
 <h2>签名算法</h2>
-<p>为了防止API调用过程中被黑客恶意篡改，调用任何一个API都需要携带签名，网关服务端会根据请求参数，对签名进行验证，签名不合法的请求将会被拒绝。网关目前支持的签名算法有三种：MD5(sign_method=md5)，HMAC_MD5(sign_method=hmac)，签名大体过程如下：</p>
+<p>为了防止API调用过程中被黑客恶意篡改，调用任何一个API都需要携带签名，网关服务端会根据请求参数，对签名进行验证，签名不合法的请求将会被拒绝。网关目前支持的签名算法为：HMAC_MD5(sign_method=hmac)，签名大体过程如下：</p>
 <p>对所有API请求参数（包括公共参数和业务参数，但除去sign参数和byte[]类型的参数），根据参数名称的ASCII码表的顺序排序。如：foo1, bar2, foo_bar3, foobar4排序后的顺序是bar2, foo1, foo_bar3, foobar4。
     将排序好的参数名和参数值拼装在一起，根据上面的示例得到的结果为：bar2foo1foo_bar3foobar4。
-    把拼装好的字符串采用utf-8编码，使用签名算法对编码后的字节流进行摘要。如果使用MD5算法，则需要在拼装的字符串前后加上app的secret后，再进行摘要，如：md5(secret+bar2foo1foo_bar3foobar4+secret)；如果使用HMAC_MD5算法，则需要用app的secret初始化摘要算法后，再进行摘要，如：hmac_md5(bar2foo1foo_bar3foobar4)。
+    把拼装好的字符串采用utf-8编码，使用签名算法对编码后的字节流进行摘要。使用HMAC_MD5算法，需要用app的secret初始化摘要算法后，再进行摘要，如：hmac_md5(bar2foo1foo_bar3foobar4)。
     将摘要得到的字节流结果使用十六进制表示，如：hex(“helloworld”.getBytes(“utf-8”)) = “68656C6C6F776F726C64”
-    说明：MD5和HMAC_MD5都是128位长度的摘要算法，用16进制表示，一个十六进制的字符能表示4个位，所以签名后的字符串长度固定为32个十六进制字符。</p>
+    说明：HMAC_MD5是128位长度的摘要算法，用16进制表示，一个十六进制的字符能表示4个位，所以签名后的字符串长度固定为32个十六进制字符。</p>
 <h2>注意事项</h2>
 <ul>
     <li>
@@ -226,6 +228,16 @@
     </li>
     <li>
         <p>Post请求，简单类型的参数可以放URL中，但复杂对象参数必须放Body中，同时Content-Type需要选择application/json。</p>
+    </li>
+</ul>
+
+<h2>本网关参与签名的参数</h2>
+<ul>
+    <li>
+        <p>参与签名的参数包括：appKey、method、timestamp、version以及URL中所有业务请求参数。如果URL中的业务参数是数组，签名时需要按英文逗号拼接。</p>
+    </li>
+    <li>
+        <p>签名参数需要通过encodeURIComponent()函数进行编码。</p>
     </li>
 </ul>
 </body>

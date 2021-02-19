@@ -98,11 +98,6 @@ function sendApiRequest() {
             $.messager.alert('提示', '请填写登录session');
             return;
         }
-    } else {
-        if (!$("#tenantId").val()) {
-            $.messager.alert('提示', '请填写租户ID');
-            return;
-        }
     }
     if (!$("#sign").val()) {
         $.messager.alert('提示', '签名生成失败');
@@ -249,10 +244,6 @@ function buildApiReqUrl(bizParams) {
         reqUrl = reqUrl.replace('{' + key + '}', value);
     }
 
-    if ($("#tenantId").val()) {
-        reqUrl += "&tenantId=" + $("#tenantId").val();
-    }
-
     if (bizParamArr.length > 0) {
         reqUrl += "&" + bizParamArr.join("&");
     }
@@ -264,9 +255,6 @@ function buildCallbackReqUrl(bizParams) {
     var domain = document.location.protocol + "//" + document.location.host;
     var reqUrl = "/router/callback/" + $("#method").val();
     var bizParamArr = [];
-    if ($("#tenantId").val()) {
-        bizParamArr.push("tenantId=" + $("#tenantId").val());
-    }
     if (bizParams) {
         for (var key in bizParams) {
             var value = bizParams[key];
