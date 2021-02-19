@@ -6,7 +6,6 @@ import com.zhiyong.gateway.server.processor.CallbackProcessorChain;
 import java.util.concurrent.Executor;
 
 import javax.annotation.Resource;
-import javax.security.auth.callback.Callback;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.zhiyong.gateway.biz.model.ApiResult;
 import com.zhiyong.gateway.biz.service.MonitorService;
 import com.zhiyong.gateway.common.enums.ErrorCode;
-import com.zhiyong.gateway.common.exception.BizSessionException;
 import com.zhiyong.gateway.common.exception.GatewayException;
 import com.zhiyong.gateway.common.utils.CommonUtil;
 import com.zhiyong.gateway.server.context.ApiContext;

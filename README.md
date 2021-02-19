@@ -22,7 +22,8 @@ S端：主要是服务端代码应用，可能会是多个垂直业务领域的�
 ## <a name="2">平台介绍</a>
 
 &nbsp;&nbsp;&nbsp;&nbsp;致用网关平台是一个简易的API网关平台。旨在降低后端服务开发与前端调用的耦合性，实现接口开发标准化、统一化。
-<div><img src="http://git.highso.com.cn:81/saas/api-gateway/raw/master/api-gateway-server/src/main/resources/static/images/gateway-design.png" width="800" height="600"/></div>
+<div><img src="https://github.com/zoomtech2021/api-gateway/raw/master/api-gateway-server/src/main/resources/static/images/gateway-design.png" width="800" height="600"/></div>
+
 ## <a name="3">平台特性</a>
 *  目前网关仅支持服务端的Dubbo服务接入（HTTP服务暂不支持）
 *  支持界面化的接口配置管理
@@ -36,7 +37,7 @@ S端：主要是服务端代码应用，可能会是多个垂直业务领域的�
 *  平台支持分布式部署，可按需任意扩展节点部署；同时支持了二级缓存配置访问特性，以满足高并发要求
 *  平台技术架构图
 
-<div><img src="http://git.highso.com.cn:81/saas/api-gateway/raw/master/api-gateway-server/src/main/resources/static/images/gateway-technical.jpg"/></div>
+<div><img src="https://github.com/zoomtech2021/api-gateway/raw/master/api-gateway-server/src/main/resources/static/images/gateway-technical.jpg"/></div>
 
 
 ## <a name="4">平台技术</a>
