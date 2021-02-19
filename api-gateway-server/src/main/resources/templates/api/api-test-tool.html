@@ -1,0 +1,134 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>致用网关平台-API测试工具</title>
+    <link href="/static/css/default.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/themes/default/easyui.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/themes/icon.css"/>
+    <script type="text/javascript" src="/static/js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.serializejson.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.easyui.min.1.2.2.js"></script>
+    <script type="text/javascript" src='/static/js/md5.js'></script>
+    <script type="text/javascript" src='/static/js/sign.js'></script>
+    <script type="text/javascript" src='/static/pagejs/common.js'></script>
+    <script type="text/javascript" src='/static/pagejs/api-test-tool.js'></script>
+</head>
+<style>
+    textarea{
+        resize:none;
+    }
+    .api-form input {
+        width: 380px;
+        height: 30px;
+    }
+
+    .combo-text{
+        height: 30px;
+        width: 400px;
+        padding-left: 3px;
+    }
+
+    .combo-arrow {
+        height: 30px;
+    }
+
+    .api-form select {
+        width: 380px;
+        height: 30px;
+    }
+</style>
+<body style="background-color:white;">
+<div>
+    <div region="north" split="true">
+        <div class="easyui-panel" title="API测试工具">
+            <form id="api-test-form" method="post">
+                <input type="hidden" id="sign" />
+                <input type="hidden" id="apiType" />
+                <table class="api-form" border="0" style="width: 100%">
+                    <tr>
+                        <td width="40%" valign="top">
+                            <table cellpadding="5" style="width: 100%">
+                                <tr>
+                                    <td style="width: 90px;"><font color="red">*</font>API名称:</td>
+                                    <td>
+                                        <input id="apiList" class="easyui-combobox"/>
+                                        <input type="hidden" id="method"/>
+                                        <input type="hidden" id="version"/>
+                                        <div id="apiDesc"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 90px;"><font color="red">*</font>请求方式:</td>
+                                    <td>
+                                        <select id="httpMethod" class="easyui-textbox" data-options="readonly:true" disabled>
+                                            <option value=""></option>
+                                            <option value="GET">GET</option>
+                                            <option value="POST">POST</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr id="appKeyTr">
+                                    <td style="width: 90px;"><font color="red">*</font>AppKey:</td>
+                                    <td>
+                                        <input class="easyui-validatebox" type="text" id="appKey"/>
+                                    </td>
+                                </tr>
+                                <tr id="loginSession">
+                                    <td style="width: 90px;"><font color="red">*</font>session:</td>
+                                    <td>
+                                        <input class="easyui-validatebox" type="text" id="session"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 90px;">&nbsp;租户ID:</td>
+                                    <td>
+                                        <input class="easyui-validatebox" type="text" id="tenantId" />
+                                    </td>
+                                </tr>
+                                <tr style="height: 30px;font-weight: bold;">
+                                    <td style="width: 90px;color: blue;">业务参数</td>
+                                    <td><hr/></td>
+                                </tr>
+                            </table>
+                            <table class="api-form" id="bizParam" cellpadding="5" style="width: 100%">
+                                <tr id="headParam">
+                                    <td style="width: 90px;">&nbsp;head参数:</td>
+                                    <td><input class="easyui-validatebox" type="text" name="headParam" required="true"
+                                               validType="length[1,80]"/></td>
+                                </tr>
+                                <tr id="bodyParam">
+                                    <td style="width: 90px;" valign="top">&nbsp;body参数:</td>
+                                    <td><textarea name="paramJson" rows="15" cols="60"></textarea></td>
+                                </tr>
+                            </table>
+                            <div style="text-align:center;padding-top:20px">
+                                <a href="javascript:void(0)" class="easyui-linkbutton"
+                                   onclick="clearForm()">清空</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <a id="sendRequestBtn" href="javascript:void(0)" class="easyui-linkbutton"
+                                   onclick="sendRequest()">发送请求</a>
+                            </div>
+                        </td>
+                        <td width="5%"></td>
+                        <td width="55%" valign="top">
+                            <table cellpadding="5">
+                                <tr>
+                                    <td valign="top"><font color="red">*</font>请求地址:</td>
+                                    <td>
+                                        <textarea id="reqUrl" rows="10" cols="90" readonly="true"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top"><font color="red">*</font>响应结果:</td>
+                                    <td>
+                                        <textarea id="response" rows="25" cols="90" readonly="true"></textarea>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>

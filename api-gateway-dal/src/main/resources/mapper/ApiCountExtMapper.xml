@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiyong.gateway.dal.dao.ApiCountExtMapper">
+    <resultMap id="ApiCountResultMap" type="com.zhiyong.gateway.dal.domain.ApiCount">
+        <result column="api_name" jdbcType="VARCHAR" property="apiName" />
+        <result column="api_version" jdbcType="VARCHAR" property="apiVersion" />
+        <result column="count_date" jdbcType="VARCHAR" property="countDate" />
+        <result column="total_count" jdbcType="INTEGER" property="totalCount" />
+        <result column="succ_count" jdbcType="INTEGER" property="succCount" />
+        <result column="total_spends" jdbcType="INTEGER" property="totalSpends" />
+        <result column="max_spends" jdbcType="INTEGER" property="maxSpends" />
+    </resultMap>
+
+    <select id="queryApiCount" resultMap="ApiCountResultMap">
+        select api_name, api_version, sum(total_count) as total_count, sum(succ_count) as succ_count,
+               sum(total_spends) as total_spends, sum(max_spends) as max_spends
+        from api_count
+        where 1 = 1
+        <if test="apiName != null and apiName != ''">
+            and api_name like CONCAT('%',#{apiName},'%')
+        </if>
+        <if test="startTime != null and startTime != ''">
+            <![CDATA[ and count_date >= #{startTime} ]]>
+        </if>
+        <if test="endTime != null and endTime != ''">
+            <![CDATA[and count_date <= #{endTime} ]]>
+        </if>
+        group by api_name, api_version
+        <if test="sort != null and sort != ''">
+            order by ${sort}
+        </if>
+    </select>
+</mapper>

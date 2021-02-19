@@ -1,0 +1,116 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>致用网关平台-ZYAPI</title>
+    <link href="/static/css/default.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/themes/default/easyui.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/themes/icon.css"/>
+    <script type="text/javascript" src="/static/js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.easyui.min.1.2.2.js"></script>
+    <script type="text/javascript" src="/static/js/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src='/static/pagejs/common.js'></script>
+</head>
+<script type="text/javascript" th:inline="none">
+    $(function () {
+        var now = dateFormatYMD(new Date());
+        $('#s-startTime').datebox('setValue', now);
+        $('#s-endTime').datebox('setValue', now);
+        $('#api-count-list').datagrid({
+            method: 'post',
+            url: '/admin/getApiCountList.do',
+            //fit: true,
+            height: getGridHeight() - 10,
+            rownumbers: true,
+            fitColumns: true,
+            pagination: true,
+            striped: true,
+            loadMsg: '正在拼命加载数据...',
+            pageSize: 20,
+            pageList: [20, 30, 50, 100],
+            columns: [[
+                {field: 'apiName', title: 'API名称', width: 300, sortable: true},
+                {field: 'apiVersion', title: 'API版本', width: 100, align: 'center', sortable: true},
+                {field: 'totalCount', title: '总次数', width: 100, align: 'center', sortable: true},
+                {field: 'succCount', title: '成功次数', width: 100, align: 'center', sortable: true},
+                {
+                    field: 'succRate', title: '成功率', width: 100, align: 'center',
+                    formatter: function (value, row) {
+                        var totalCount = row["totalCount"] || 0;
+                        var succCount = row["succCount"] || 0;
+                        if (totalCount > 0) {
+                            var succRate = succCount * 100.0 / totalCount;
+                            if (succCount == totalCount) {
+                                return "<span style='color: green;'>" + (succRate.toFixed(2) + '%') + "</span>";
+                            }
+                            if (succRate > 0) {
+                                return "<span style='color: #ec971f;'>" + (succRate.toFixed(2) + '%') + "</span>";
+                            }
+                            return "<span style='color: red;'>" + (succRate.toFixed(2) + '%') + "</span>";
+                        }
+                        return "--";
+                    }
+                },
+                {
+                    field: 'totalSpends',
+                    title: '平均耗时(ms)',
+                    width: 100,
+                    align: 'center',
+                    sortable: true,
+                    formatter: function (value, row) {
+                        var totalCount = row["totalCount"] || 0;
+                        if (totalCount > 0) {
+                            return Math.floor(value * 1.0 / totalCount);
+                        }
+                        return 0;
+                    }
+                },
+                {field: 'maxSpends', title: '最大耗时(ms)', width: 100, align: 'center', sortable: true},
+            ]],
+            rowStyler: function (index, row) {
+                return 'background-color:white;';
+            },
+            onBeforeLoad: function (param) {
+                param.apiName = $("#s-apiName").val();
+                param.startTime = $('#s-startTime').datebox('getValue');
+                param.endTime = $('#s-endTime').datebox('getValue');
+            }
+        });
+
+        $("#search").click(function () {
+            var startTime = $('#s-startTime').datebox('getValue');
+            var endTime = $('#s-endTime').datebox('getValue');
+            if (!startTime) {
+                $.messager.alert('提示', '请输入统计开始时间');
+                return;
+            }
+            if (!endTime) {
+                $.messager.alert('提示', '请输入统计结束时间');
+                return;
+            }
+            if (startTime > endTime) {
+                $.messager.alert('提示', '开始时间不能大于结束时间');
+                return;
+            }
+            $('#api-count-list').datagrid('reload');
+        });
+    });
+
+</script>
+<body style="overflow-y: hidden;" scroll="no">
+<div style="background-color:white;">
+    <div title="高级查询" class="easyui-panel" region="north" border="true"
+         style="height:60px;margin:20px 0 20px 0;border-bottom: hidden;background-color:white;">
+        <div>
+            <label style="padding: 0 10px 0 10px">统计周期: </label>
+            <input id="s-startTime" type="text" class="easyui-datebox"></input>
+            至
+            <input id="s-endTime" type="text" class="easyui-datebox"></input>
+            <label style="padding: 0 10px 0 10px">API名称: </label><input id="s-apiName" class="easyui-textbox"
+                                                                        style="width:200px">
+            <a id="search" style="padding-left: 30px;" href="#" class="easyui-linkbutton" iconCls="icon-search">查询</a>
+        </div>
+    </div>
+    <div id="api-count-list" region="center"></div>
+</div>
+</body>

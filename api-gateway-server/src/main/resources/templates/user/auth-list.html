@@ -1,0 +1,54 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>致用网关平台-用户列表</title>
+    <link href="/static/css/default.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/themes/default/easyui.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/themes/icon.css"/>
+    <script type="text/javascript" src="/static/js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.easyui.min.1.2.2.js"></script>
+    <script type="text/javascript" src="/static/js/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src='/static/pagejs/common.js'></script>
+    <script type="text/javascript" src='/static/pagejs/auth.js'></script>
+</head>
+<body style="overflow-y: hidden;" scroll="no">
+<div style="background-color:white;">
+    <div title="高级查询" class="easyui-panel" region="north" border="true"
+         style="height:60px;margin:20px 0 20px 0;border-bottom: hidden;background-color:white;">
+        <div>
+            <label style="padding: 0 10px 0 10px">账号: </label><input id="s-account" class="easyui-textbox"
+                                                                       style="width:200px">
+            <a id="search" style="padding-left: 30px;" href="#" class="easyui-linkbutton" iconCls="icon-search">查询</a>
+        </div>
+    </div>
+    <div id="auth-list" region="center"></div>
+</div>
+
+<!-- 弹窗 -->
+<div id="add-auth" class="easyui-dialog" title="添加权限" style="width:430px;" closed="true"
+     data-options="resizable:true,modal:true">
+    <div style="padding:10px 60px 20px 60px">
+        <form id="add-auth-form" method="post">
+            <table cellpadding="5">
+                <tr>
+                    <td><font color="red">*</font>用户:</td>
+                    <td>
+                        <input id="userList" name="userId" class="easyui-combobox" style="width: 180px;" required="true" validType="length[1,100]"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td><font color="red">*</font>API类目:</td>
+                    <td>
+                        <input id="groupList" name="apiGroup" class="easyui-combobox" style="width: 180px;" required="true" validType="length[1,100]"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <div style="text-align:center;padding:5px">
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#add-auth-form').form('clear');">重置</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitAddAuth()">提交</a>
+        </div>
+    </div>
+</div>
+</body>

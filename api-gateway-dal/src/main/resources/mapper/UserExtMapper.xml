@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiyong.gateway.dal.dao.UserExtMapper">
+    <resultMap id="AuthExtResultMap" type="com.zhiyong.gateway.dal.domain.AuthExt">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="account" jdbcType="VARCHAR" property="account"/>
+        <result column="api_group" jdbcType="INTEGER" property="apiGroup"/>
+        <result column="group_name" jdbcType="VARCHAR" property="groupName"/>
+    </resultMap>
+
+    <select id="queryAuthList" resultMap="AuthExtResultMap">
+        select t1.id, t1.create_time, t1.user_id, t1.api_group, t2.account, t3.group_name
+        from auth t1, user t2, api_group t3
+        where t1.user_id = t2.id and t1.api_group = t3.id
+        <if test="account != null and account != ''">
+            and t2.account like CONCAT('%',#{account},'%')
+        </if>
+        <if test="sort != null and sort != ''">
+            order by ${sort}
+        </if>
+    </select>
+</mapper>

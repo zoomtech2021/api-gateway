@@ -1,0 +1,196 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>致用网关平台-应用列表</title>
+    <link href="/static/css/default.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/themes/default/easyui.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/themes/icon.css"/>
+    <script type="text/javascript" src="/static/js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.easyui.min.1.2.2.js"></script>
+    <script type="text/javascript" src="/static/js/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src='/static/pagejs/common.js'></script>
+</head>
+<script type="text/javascript" th:inline="none">
+    $(function () {
+        $('#app-list').datagrid({
+            frozenColumns: [[{
+                field: 'ck',
+                checkbox: true
+            }]],
+            singleSelect: true,
+            method: 'post',
+            url: '/admin/getAppList.do',
+            //fit: true,
+            height: getGridHeight() - 10,
+            fitColumns: true,
+            rownumbers: true,
+            pagination: true,
+            striped: true,
+            loadMsg: '正在拼命加载数据...',
+            pageSize: 20,
+            pageList: [20, 30, 50, 100],
+            columns: [[
+                {field: 'id', title: 'ID', width: 40, align: 'center', sortable:true},
+                {field: 'appName', title: '应用名', width: 140, sortable:true},
+                {field: 'appType', title: '应用类型', width: 100, align: 'center', sortable:true},
+                {field: 'appKey', title: 'AppKey', width: 200, align: 'center', sortable:true},
+                {field: 'appSecret', title: 'AppSecret', width: 200, align: 'center', sortable:true},
+                {
+                    field: 'createTime', title: '创建时间', width: 150, align: 'center', sortable:true, formatter: function (value) {
+                        return dateFormatter(value);
+                    }
+                },
+                {field: 'creator', title: '创建人', width: 100, align: 'center', sortable:true},
+                {
+                    field: 'updateTime', title: '最后修改时间', width: 150, align: 'center', sortable:true, formatter: function (value) {
+                        if (!value) {
+                            return;
+                        }
+                        return dateFormatter(value);
+                    }
+                },
+                {field: 'updater', title: '最后修改人', width: 100, align: 'center', sortable:true}
+            ]],
+            rowStyler: function (index, row) {
+                return 'background-color:white;';
+            },
+            onBeforeLoad: function (param) {
+                param.appName = $("#s-appName").val();
+                param.appKey = $("#s-appKey").val();
+            },
+            toolbar: [{
+                iconCls: 'icon-add',
+                text: '添加',
+                handler: function () {
+                    $('#add-app').dialog('open');
+                    clearAddApp();
+                }
+            }, '-', {
+                text: '修改',
+                iconCls: 'icon-edit',
+                handler: editApp
+            }, '-', {
+                text: '删除',
+                iconCls: 'icon-remove',
+                handler: delApp
+            }]
+        });
+
+        $("#search").click(function () {
+            $('#app-list').datagrid('reload');
+        });
+    });
+
+    function editApp() {
+        var row = $('#app-list').datagrid('getSelected');
+        if (!row) {
+            $.messager.alert('提示', '请选择需要编辑的记录');
+            return;
+        }
+        $('#add-app').dialog('open');
+        $("#add-app-form").form('load', row);
+        $("#appType").val(row.appType);
+        $("#appId").val(row.id);
+    }
+
+    function delApp() {
+        var row = $('#app-list').datagrid('getSelected');
+        if (!row) {
+            $.messager.alert('提示', '请选择需要删除的记录');
+            return;
+        }
+        $.messager.confirm('提示', '删除后无法恢复，确定要删除吗?', function (r) {
+            if (r) {
+                $.post("/admin/delApp.do", {id: row.id}, function (res) {
+                    if (res.code != 200) {
+                        $.messager.alert('提示', '对不起，应用删除失败:' + res.msg);
+                        return;
+                    }
+                    $('#app-list').datagrid('reload');
+                });
+            }
+        });
+    }
+
+    function clearAddApp() {
+        $('#add-app-form').form('clear');
+    }
+
+    function submitAddApp() {
+        var validate = $("#add-app-form").form('validate');
+        if (validate) {
+            var params = $('#add-app-form').serialize();
+            $.post("/admin/saveApp.do", params, function (res) {
+                if (res.code != 200) {
+                    $.messager.alert('提示', '对不起，应用添加失败:' + res.msg);
+                    return;
+                }
+                $('#add-app').dialog('close');
+                $('#app-list').datagrid('reload');
+                clearAddApp();
+            });
+        }
+    }
+</script>
+<body style="overflow-y: hidden;" scroll="no">
+<div style="background-color:white;">
+    <div title="高级查询" class="easyui-panel" region="north" border="true"
+         style="height:60px;margin:20px 0 20px 0;border-bottom: hidden;background-color:white;">
+        <div>
+            <label style="padding: 0 10px 0 10px">应用名称: </label><input id="s-appName" class="easyui-textbox"
+                                                                       style="width:200px">
+            <label style="padding: 0 10px 0 10px">AppKey: </label><input id="s-appKey" class="easyui-textbox"
+                                                                         style="width:200px">
+            <a id="search" style="padding-left: 30px;" href="#" class="easyui-linkbutton" iconCls="icon-search">查询</a>
+        </div>
+    </div>
+    <div id="app-list" region="center"></div>
+</div>
+
+<!-- 弹窗 -->
+<div id="add-app" class="easyui-dialog" title="添加应用" style="width:430px;" closed="true"
+     data-options="resizable:true,modal:true">
+    <div style="padding:10px 60px 20px 60px">
+        <form id="add-app-form" method="post">
+            <input type="hidden" id="appId" name="id"/>
+            <table cellpadding="5">
+                <tr>
+                    <td><font color="red">*</font>应用名:</td>
+                    <td><input class="easyui-validatebox" type="text" name="appName" required="true"
+                               validType="length[4,10]" style="width: 210px;"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td><font color="red">*</font>应用类型:</td>
+                    <td>
+                        <select id="appType" class="easyui-textbox" data-options="readonly:true" name="appType"
+                                style="width: 210px;">
+                            <option value="WEB">WEB</option>
+                            <option value="APP">APP</option>
+                            <option value="小程序">小程序</option>
+                            <option value="H5">H5</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><font color="red">*</font>AppKey:</td>
+                    <td><input class="easyui-validatebox" type="text" name="appKey" required="true"
+                               validType="length[6,11]" style="width: 210px;"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td><font color="red">*</font>AppSecret:</td>
+                    <td><input class="easyui-validatebox" type="text" name="appSecret" required="true"
+                               style="width: 210px;"></input>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <div style="text-align:center;padding:5px">
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearAddApp()">重置</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitAddApp()">提交</a>
+        </div>
+    </div>
+</div>
+</body>

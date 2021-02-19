@@ -1,0 +1,89 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>致用网关平台-登录</title>
+    <link href="/static/css/default.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/themes/default/easyui.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/themes/icon.css"/>
+    <script type="text/javascript" src="/static/js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.easyui.min.1.2.2.js"></script>
+    <script type="text/javascript" src="/static/js/locale/easyui-lang-zh_CN.js"></script>
+</head>
+<style>
+    #login-form input {
+        width: 180px;
+        height: 30px;
+    }
+
+    input, img {
+        vertical-align: middle;
+    }
+</style>
+<script type="text/javascript">
+    function login() {
+        if (!$("#account").val()) {
+            $.messager.alert('提示', '请输入账号');
+            return;
+        }
+        if (!$("#password").val()) {
+            $.messager.alert('提示', '请输入密码');
+            return;
+        }
+        var params = $('#login-form').serialize();
+        $.post("/login.do", params, function (res) {
+            if (res.code != 200) {
+                $.messager.alert('提示', res.msg);
+                $("#imageCode").click();
+                return;
+            }
+            location.href = "/";
+        });
+    }
+
+    function reset() {
+        $('#login-form').form('clear');
+    }
+
+    $(function () {
+        $("html").die().live("keydown", function (event) {
+            if (event.keyCode == 13) {
+                login();
+            }
+        });
+    });
+</script>
+<body>
+<div id="loginWin" class="easyui-window" title="致用网关登录" style="width:450px;height:300px;background: #EBF3FD;"
+     closed="false" closable="false" maximizable="false" minimizable="false" collapsible="false"
+     iconCls="icon icon-save">
+    <div style="padding:30px 60px 20px 60px;">
+        <form id="login-form" method="post">
+            <table cellpadding="5">
+                <tr>
+                    <td><font color="red">*</font>账号:</td>
+                    <td><input class="easyui-validatebox" type="text" id="account" name="account"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td><font color="red">*</font>密码:</td>
+                    <td><input class="easyui-validatebox" type="password" id="password" name="password"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td><font color="red">*</font>验证码:</td>
+                    <td>
+                        <input class="easyui-validatebox" type="text" name="vercode" style="width: 80px;"></input>
+                        <img id="imageCode" src="/login/imageCode"
+                             onclick="javascript:this.src='/login/imageCode?'+new Date().getTime()"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <div style="text-align:center;padding-top:30px">
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="login()">登录</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="reset()">清空</a>
+        </div>
+    </div>
+</div>
+</body>

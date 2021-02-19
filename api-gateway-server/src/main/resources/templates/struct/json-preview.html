@@ -1,0 +1,24 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"/>
+    <title>网关说明</title>
+    <script type="text/javascript" src="/static/jsonview/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/jsonview/jquery.json-viewer.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/jsonview/jquery.json-viewer.css"/>
+</head>
+<script th:inline="javascript">
+    var json = [[${json}]];
+    $(function () {
+        $('#json-renderer').jsonViewer(json, {});
+    });
+</script>
+<body>
+<div class="container" style="margin-top: 1em;">
+    <div class="row">
+        <pre id="json-renderer" style="margin: 10px;"></pre>
+    </div>
+</div>
+</body>
+</html>

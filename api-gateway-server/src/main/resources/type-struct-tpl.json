@@ -1,0 +1,27 @@
+{
+  "name": "testModel",
+  "desc": "测试模型",
+  "type": "com.zhiyong.gateway.facade.model.TestModel",
+  "collectionType": "java.util.Map",
+  "children": [{
+    "name": "map",
+    "desc": "测试模型",
+    "type": "com.zhiyong.gateway.facade.model.TestModel"
+  }, {
+    "name": "testModels",
+    "desc": "测试模型",
+    "type": "com.zhiyong.gateway.facade.model.TestModel"
+  }, {
+    "name": "mapList",
+    "desc": "测试模型MAP",
+    "type": "com.zhiyong.gateway.facade.model.TestModel",
+    "collectionType": "java.util.Map",
+    "mapping": {
+      "*": {
+        "name": "map",
+        "desc": "测试模型",
+        "type": "com.zhiyong.gateway.facade.model.TestModel"
+      }
+    }
+  }]
+}

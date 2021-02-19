@@ -1,0 +1,98 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>致用网关平台-ZYAPI</title>
+    <link href="/static/css/default.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/themes/default/easyui.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/themes/icon.css"/>
+    <script type="text/javascript" src="/static/js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.easyui.min.1.2.2.js"></script>
+    <script type="text/javascript" src="/static/js/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src='/static/pagejs/common.js'></script>
+</head>
+<script type="text/javascript" th:inline="none">
+    $(function () {
+        $('#opt-log-list').datagrid({
+            method: 'post',
+            url: '/admin/getOptLogList.do',
+            //fit: true,
+            height: getGridHeight() - 10,
+            rownumbers: true,
+            fitColumns: true,
+            pagination: true,
+            striped: true,
+            loadMsg: '正在拼命加载数据...',
+            pageSize: 20,
+            pageList: [20, 30, 50, 100],
+            columns: [[
+                {
+                    field: 'createTime',
+                    title: '创建时间',
+                    width: 150,
+                    align: 'center',
+                    sortable: true,
+                    formatter: function (value) {
+                        return dateFormatter(value);
+                    }
+                },
+                {field: 'action', title: '动作', width: 130, sortable: true},
+                {
+                    field: 'content', title: '操作内容', width: 300,
+                    formatter: function (value, row, index) {
+                        return "<a id='logContent" + index + "' href='javascript:previewLogContent(" + index + ")' style='text-decoration: underline;color:#0000ff;'>" + value + "</a>";
+                    }
+                },
+                {field: 'operator', title: '操作人', width: 100, align: 'center',sortable: true},
+                {
+                    field: 'result',
+                    title: '结果',
+                    width: 100,
+                    align: 'center',
+                    sortable: true,
+                    formatter: function (value, row) {
+                        return value == 0 ? '成功' : '失败';
+                    }
+                }
+            ]],
+            rowStyler: function (index, row) {
+                return 'background-color:white;';
+            },
+            onBeforeLoad: function (param) {
+                param.content = $("#s-content").val();
+            }
+        });
+
+        $("#search").click(function () {
+            $('#opt-log-list').datagrid('reload');
+        });
+    });
+
+    function previewLogContent(index) {
+        $('#logContent').text($("#logContent" + index).html());
+        $('#optLogContentWin').window('open');
+    }
+</script>
+<body style="overflow-y: hidden;" scroll="no">
+<div style="background-color:white;">
+    <div title="高级查询" class="easyui-panel" region="north" border="true"
+         style="height:60px;margin:20px 0 20px 0;border-bottom: hidden;background-color:white;">
+        <div>
+            <label style="padding: 0 10px 0 10px">操作内容: </label><input id="s-content" class="easyui-textbox"
+                                                                       style="width:200px">
+            <a id="search" style="padding-left: 30px;" href="#" class="easyui-linkbutton" iconCls="icon-search">查询</a>
+        </div>
+    </div>
+    <div id="opt-log-list" region="center"></div>
+</div>
+
+<div id="optLogContentWin" class="easyui-window" title="操作内容预览" collapsible="false" minimizable="false"
+     maximizable="false" icon="icon-save" closed="true" shadow="true" style="width: 630px; height: 400px; padding: 5px;
+        background: #fafafa;">
+    <div class="easyui-layout" fit="true">
+        <div region="center" border="false" style="padding: 10px; background: #fff; border: 1px solid #ccc;">
+            <div id="logContent" style="width: 580px;height: 340px;margin:5px;word-break:break-all;word-wrap:break-word;"></div>
+        </div>
+    </div>
+</div>
+</body>

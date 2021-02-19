@@ -1,0 +1,172 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>致用网关平台-API类目管理</title>
+    <link href="/static/css/default.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/themes/default/easyui.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/themes/icon.css"/>
+    <script type="text/javascript" src="/static/js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.easyui.min.1.2.2.js"></script>
+    <script type="text/javascript" src="/static/js/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src='/static/pagejs/common.js'></script>
+</head>
+<script type="text/javascript" th:inline="none">
+    $(function () {
+        $('#group-list').datagrid({
+            frozenColumns: [[{
+                field: 'ck',
+                checkbox: true
+            }]],
+            singleSelect: true,
+            method: 'post',
+            url: '/admin/getApiGroupList.do',
+            //fit: true,
+            height: getGridHeight() - 10,
+            rownumbers: true,
+            fitColumns: true,
+            pagination: true,
+            striped: true,
+            loadMsg: '正在拼命加载数据...',
+            pageSize: 20,
+            pageList: [20, 30, 50, 100],
+            columns: [[
+                {field: 'id', title: 'ID', width: 40, align: 'center', sortable:true},
+                {field: 'groupName', title: '类目名', width: 140, sortable:true},
+                {field: 'groupDesc', title: '类目描述', width: 100, align: 'center'},
+                {
+                    field: 'createTime', title: '创建时间', width: 150, align: 'center', sortable:true, formatter: function (value) {
+                        return dateFormatter(value);
+                    }
+                },
+                {field: 'creator', title: '创建人', width: 100, align: 'center', sortable:true},
+                {
+                    field: 'updateTime', title: '最后修改时间', width: 150, align: 'center', sortable:true, formatter: function (value) {
+                        if (!value) {
+                            return;
+                        }
+                        return dateFormatter(value);
+                    }
+                },
+                {field: 'updater', title: '最后修改人', width: 100, align: 'center', sortable:true}
+            ]],
+            rowStyler: function (index, row) {
+                return 'background-color:white;';
+            },
+            onBeforeLoad: function (param) {
+                param.groupName = $("#s-apiGroupName").val();
+            },
+            toolbar: [{
+                iconCls: 'icon-add',
+                text: '添加',
+                handler: function () {
+                    $('#add-group').dialog('open');
+                    clearAddApiGroup();
+                }
+            }, '-', {
+                text: '修改',
+                iconCls: 'icon-edit',
+                handler: editApiGroup
+            }, '-', {
+                text: '删除',
+                iconCls: 'icon-remove',
+                handler: delApiGroup
+            }]
+        });
+
+        $("#search").click(function () {
+            $('#group-list').datagrid('reload');
+        });
+    });
+
+    function editApiGroup() {
+        var row = $('#group-list').datagrid('getSelected');
+        if (!row) {
+            $.messager.alert('提示', '请选择需要编辑的记录');
+            return;
+        }
+        $('#add-group').dialog('open');
+        $("#add-group-form").form('load', row);
+        $("#groupId").val(row.id);
+    }
+
+    function delApiGroup() {
+        var row = $('#group-list').datagrid('getSelected');
+        if (!row) {
+            $.messager.alert('提示', '请选择需要删除的记录');
+            return;
+        }
+        $.messager.confirm('提示', '删除后无法恢复，确定要删除吗?', function (r) {
+            if (r) {
+                $.post("/admin/delApiGroup.do", {id: row.id}, function (res) {
+                    if (res.code != 200) {
+                        $.messager.alert('提示', '对不起，应用删除失败:' + res.msg);
+                        return;
+                    }
+                    $('#group-list').datagrid('reload');
+                });
+            }
+        });
+    }
+
+    function clearAddApiGroup() {
+        $('#add-group-form').form('clear');
+    }
+
+    function submitAddApiGroup() {
+        var validate = $("#add-group-form").form('validate');
+        if (validate) {
+            var params = $('#add-group-form').serialize();
+            $.post("/admin/saveApiGroup.do", params, function (res) {
+                if (res.code != 200) {
+                    $.messager.alert('提示', '对不起，应用添加失败:' + res.msg);
+                    return;
+                }
+                $('#add-group').dialog('close');
+                $('#group-list').datagrid('reload');
+                clearAddApiGroup();
+            });
+        }
+    }
+</script>
+<body style="overflow-y: hidden;" scroll="no">
+<div style="background-color:white;">
+    <div title="高级查询" class="easyui-panel" region="north" border="true"
+         style="height:60px;margin:20px 0 20px 0;border-bottom: hidden;background-color:white;">
+        <div>
+            <label style="padding: 0 10px 0 10px">类目名称: </label><input id="s-apiGroupName" class="easyui-textbox"
+                                                                       style="width:200px">
+            <a id="search" style="padding-left: 30px;" href="#" class="easyui-linkbutton" iconCls="icon-search">查询</a>
+        </div>
+    </div>
+    <div id="group-list" region="center"></div>
+</div>
+
+<!-- 弹窗 -->
+<div id="add-group" class="easyui-dialog" title="添加API类目" style="width:430px;" closed="true"
+     data-options="resizable:true,modal:true">
+    <div style="padding:10px 60px 20px 60px">
+        <form id="add-group-form" method="post">
+            <input type="hidden" id="groupId" name="id"/>
+            <table cellpadding="5">
+                <tr>
+                    <td><font color="red">*</font>类目名:</td>
+                    <td><input class="easyui-validatebox" type="text" name="groupName" required="true"
+                               validType="length[2,10]" style="width: 210px;"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td>描述:</td>
+                    <td>
+                        <textarea class="easyui-textarea" type="textarea" name="groupDesc" style="width: 210px;height: 60px;"></textarea>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <div style="text-align:center;padding:5px">
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearAddApiGroup()">重置</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitAddApiGroup()">提交</a>
+        </div>
+    </div>
+</div>
+</body>

@@ -1,0 +1,354 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>致用网关平台-API列表</title>
+    <link href="/static/css/default.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/themes/default/easyui.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/themes/icon.css"/>
+    <script type="text/javascript" src="/static/js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.serializejson.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.easyui.min.1.2.2.js"></script>
+    <script type="text/javascript" src='/static/pagejs/common.js'></script>
+    <script type="text/javascript" src='/static/pagejs/preview-api.js'></script>
+</head>
+<style>
+    .api-form input {
+        width: 280px;
+        height: 30px;
+    }
+
+    .api-form select {
+        width: 280px;
+        height: 30px;
+    }
+
+    .api-form .spinner-arrow-up {
+        height: 15px;
+    }
+
+    .api-form .spinner-arrow-down {
+        height: 15px;
+    }
+
+    .dynamic-table td {
+        text-align: center;
+    }
+
+    .dynamic-table td input {
+        height: 30px;
+        width: 80%;
+    }
+
+    .dynamic-table td select {
+        height: 30px;
+        width: 80%;
+    }
+
+    .dynamic-table th {
+        text-align: center;
+        font-size: 14px;
+        padding-bottom: 10px;
+    }
+
+</style>
+<body style="background-color:white;">
+<div>
+    <div region="north" split="true">
+        <div class="easyui-panel" title="API基本信息" collapsible="true">
+            <form id="api-base-form" method="post">
+                <input type="hidden" id="apiId" name="id" th:value="${id==null?'':id}"/>
+                <table class="api-form">
+                    <tr>
+                        <td width="45%">
+                            <table cellpadding="5">
+                                <tr>
+                                    <td><font color="red">*</font>API类型:</td>
+                                    <td>
+                                        <div style="line-height: 30px;">
+                                            <input type="hidden" name="apiType"/>
+                                            <input type="radio" name="apiTypeRadio" style="width: 15px;height: 15px;margin-top: -2px;margin-bottom: 1px;vertical-align: middle;" value="0" checked>普通API
+                                            <input type="radio" name="apiTypeRadio" style="width: 15px;height: 15px;margin-top: -2px;margin-bottom: 1px;vertical-align: middle;" value="1">回调API
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td width="10%">&nbsp;</td>
+                        <td width="45%"></td>
+                    </tr>
+                    <tr>
+                        <td width="45%" valign="top">
+                            <table cellpadding="5">
+                                <tr>
+                                    <td valign="top"><font color="red">*</font>API名称:</td>
+                                    <td>
+                                        <input class="easyui-validatebox" type="text" name="apiName" required="true"
+                                               validType="length[10,100]" placeholder="zhiyong.user.accout.create"/>
+                                        <div id="apiNameTip">(格式：产品线.业务线.业务类型.操作，API名称+版本号全局唯一)</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><font color="red">*</font>API描述:</td>
+                                    <td>
+                                        <input class="easyui-validatebox" type="text" name="apiDesc"
+                                               placeholder="API的职能说明"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><font color="red">*</font>API分类:</td>
+                                    <td>
+                                        <select id="apiGroup" class="easyui-textbox" data-options="readonly:true"
+                                                name="apiGroup">
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><font color="red">*</font>Api版本:</td>
+                                    <td><input class="easyui-validatebox" type="text" name="apiVersion" required="true"
+                                               validType="length[2,6]" placeholder="格式：1.0,2.0,1.0.1等"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><font color="red">*</font>超时时间:</td>
+                                    <td><input class="easyui-numberspinner" type="text" name="timeout" value="3000"
+                                               required="true" data-options="min:0,max:30000,editable:false"
+                                               placeholder="API读超时时间" style="width: 280px;"/>(单位：毫秒)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><font color="red">*</font>请求方式:</td>
+                                    <td>
+                                        <select id="httpMethod" class="easyui-textbox" data-options="readonly:true"
+                                                name="httpMethod">
+                                            <option value="GET">GET</option>
+                                            <option value="POST">POST</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td width="10%">&nbsp;</td>
+                        <td width="45%" valign="top">
+                            <table cellpadding="5">
+                                <tr>
+                                    <td valign="top"><font color="red">*</font>RPC接口名:</td>
+                                    <td><input class="easyui-validatebox" type="text" name="rpcInterface"
+                                               required="true"
+                                               validType="length[5,250]" placeholder="远程接口的完整类名"/>
+                                        <div>(例如：com.zhiyong.saas.facade.api.SegmentIdQueryFacade)</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><font color="red">*</font>RPC方法名:</td>
+                                    <td><input class="easyui-validatebox" type="text" name="rpcMethod" required="true"
+                                               validType="length[1,80]" placeholder="例如：getNextSegment"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><font color="red">*</font>RPC版本:</td>
+                                    <td><input class="easyui-validatebox" type="text" name="rpcVersion" required="true"
+                                               validType="length[1,50]" placeholder="例如：1.0.1, 1.0.1, 2.0.0"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><font color="red">*</font>登录检查:</td>
+                                    <td>
+                                        <select id="needLogin" class="easyui-textbox" data-options="readonly:true"
+                                                name="needLogin">
+                                            <option value="0">需要</option>
+                                            <option value="1">不需要</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><font color="red">*</font>权限检查:</td>
+                                    <td>
+                                        <select id="needAuth" class="easyui-textbox" data-options="readonly:true"
+                                                name="needAuth">
+                                            <option value="0">需要</option>
+                                            <option value="1">不需要</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><font color="red">*</font>限流次数:</td>
+                                    <td><input class="easyui-numberspinner" type="text" name="callLimit" value="99999"
+                                               required="true" data-options="min:0,max:99999,editable:false"
+                                               placeholder="每秒限流次数" style="width: 280px;"/>(TPS或QPS)
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+
+    <div region="center" split="true" style="padding-top: 20px;">
+        <div title="API请求参数" class="easyui-panel" style="padding:20px;overflow:hidden;" collapsible="true">
+            <form id="api-param-form" method="post">
+                <table id="api-param" class="dynamic-table" width="100%">
+                    <thead>
+                    <tr>
+                        <th width="5%">序号</th>
+                        <th width="13%">参数名</th>
+                        <th width="13%">参数描述</th>
+                        <th width="28%">参数类型</th>
+                        <th width="12%">参数来源</th>
+                        <th width="12%">是否必填</th>
+                        <th width="17%">参数示例</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </form>
+            <div style="text-align:right;padding: 5px;">
+                <span style="position: absolute;left:20px;color: #CC2222;">*提示：当参数为POJO复杂参数时（例如：UserModel|List&lt;UserModel&gt;|Map<&lt;String,UserModel&gt;|UserModel[]|等POJO及嵌套类型），需要先到"参数类型"管理菜单配置类型，然后再选择类型！！</span>
+            </div>
+        </div>
+    </div>
+    <div region="sourth" split="true" style="padding-top: 20px;">
+        <div title="API响应参数" class="easyui-panel" style="padding:20px;overflow:hidden;" collapsible="true">
+            <form id="api-result-form" method="post">
+                <table class="dynamic-table" width="100%">
+                    <thead>
+                    <tr>
+                        <th width="5%">序号</th>
+                        <th width="15%">字段名</th>
+                        <th width="18%">字段描述</th>
+                        <th width="22%">字段类型</th>
+                        <th width="20%">映射字段</th>
+                        <th width="20%">字段示例</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>默认</td>
+                        <td>code</td>
+                        <td>状态码</td>
+                        <td>java.lang.Integer</td>
+                        <td>code</td>
+                        <td>200</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>默认</td>
+                        <td>msg</td>
+                        <td>错误描述</td>
+                        <td>java.lang.String</td>
+                        <td>msg</td>
+                        <td>OK</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>默认</td>
+                        <td>data</td>
+                        <td>结果对象</td>
+                        <td>java.lang.Object</td>
+                        <td>data</td>
+                        <td>{id:1, name:2, data:[]}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="7"
+                            style="padding:20px 0 10px 15px;text-align: left;font-weight: bold;font-size: 14px;">
+                            结果对象data内部字段映射配置
+                            <hr/>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table id="api-result" class="dynamic-table" width="100%">
+                    <tbody>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--参数和结果字段模板-->
+<table id="api-param-tpl" style="display: none;">
+    <tbody>
+    <tr>
+        <td>1</td>
+        <td>
+            <input type="hidden" name="id"/>
+            <input class="easyui-validatebox" type="text" name="paramName" required="true"
+                   validType="length[1,10]" placeholder="请求方参数英文名"/>
+        </td>
+        <td>
+            <input class="easyui-validatebox" type="text" name="paramDesc" required="true"
+                   validType="length[1,10]" placeholder="参数中文名"/>
+        </td>
+        <td>
+            <input type="hidden" name="paramTypeId"/>
+            <input class="easyui-textbox" type="text" readonly="true" name="paramType" placeholder="请选择参数类型"
+                   style="width: 300px;"/>
+        </td>
+        <td>
+            <select class="easyui-textbox" data-options="readonly:true"
+                    name="paramSource" style="width:110px">
+                <option value="0">请求URL</option>
+                <option value="1">请求Body</option>
+            </select>
+        </td>
+        <td>
+            <select class="easyui-textbox" data-options="readonly:true"
+                    name="isRequired" style="width:110px">
+                <option value="0">必填</option>
+                <option value="1">非必填</option>
+            </select>
+        </td>
+        <td>
+            <input class="easyui-validatebox" type="text" name="example"/>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<table id="api-result-tpl" style="display: none;">
+    <tbody>
+    <tr>
+        <td>1</td>
+        <td>
+            <input type="hidden" name="id"/>
+            <input class="easyui-validatebox" type="text" name="fieldName" required="true"
+                   validType="length[1,10]" placeholder="返回给请求方字段英文名"/>
+        </td>
+        <td>
+            <input class="easyui-validatebox" type="text" name="fieldDesc" required="true"
+                   validType="length[1,10]" placeholder="参数中文名"/>
+        </td>
+        <td>
+            <select class="easyui-textbox" data-options="readonly:true"
+                    name="fieldType">
+                <option value="">默认后端类型</option>
+                <option value="java.lang.String">java.lang.String</option>
+                <option value="java.lang.Integer">java.lang.Integer</option>
+                <option value="java.lang.Long">java.lang.Long</option>
+                <option value="java.lang.Float">java.lang.Float</option>
+                <option value="java.lang.Double">java.lang.Double</option>
+                <option value="java.lang.Boolean">java.lang.Boolean</option>
+                <option value="java.util.List">java.util.List</option>
+                <option value="java.util.Set">java.util.Set</option>
+                <option value="java.util.Map">java.util.Map</option>
+                <option value="java.lang.String[]">java.lang.String[]</option>
+                <option value="java.lang.Integer[]">java.lang.Integer[]</option>
+                <option value="java.lang.Long[]">java.lang.Long[]</option>
+                <option value="java.lang.Float[]">java.lang.Float[]</option>
+                <option value="java.lang.Double[]">java.lang.Double[]</option>
+                <option value="java.lang.Boolean[]">java.lang.Boolean[]</option>
+            </select>
+        </td>
+        <td>
+            <input class="easyui-validatebox" type="text" name="backFieldName" placeholder="后端参数英文名"/>
+        </td>
+        <td>
+            <input class="easyui-validatebox" type="text" name="example"/>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>

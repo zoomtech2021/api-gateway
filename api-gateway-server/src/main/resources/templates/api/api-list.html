@@ -1,0 +1,42 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>致用网关平台-API列表</title>
+    <link href="/static/css/default.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/themes/default/easyui.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/themes/icon.css"/>
+    <script type="text/javascript" src="/static/js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.easyui.min.1.2.2.js"></script>
+    <script type="text/javascript" src="/static/js/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src='/static/pagejs/common.js'></script>
+    <script type="text/javascript" src='/static/pagejs/api-list.js'></script>
+</head>
+<style>
+    .tree li {
+        padding-top: 5px;
+    }
+</style>
+<body class="easyui-layout" style="overflow-y: hidden;background-color:white" scroll="no" fit="true">
+<div id="groupPanel" region="west" class="easyui-panel" title="类目过滤" style="width:130px; margin-top:5px;border:0;">
+    <ul id="groupList" class="easyui-tree" border="true" style="margin-bottom: 15px;"></ul>
+</div>
+<div id="mainPanle" region="center" style="background: #eee; overflow-y:hidden">
+    <div style="background-color:white;">
+        <div title="高级查询" class="easyui-panel" region="north" border="true"
+             style="height:60px;margin:20px 0 20px 0;border-bottom: hidden;background-color:white;">
+            <div>
+                <input id="groupId" type="hidden"/>
+                <label style="padding: 0 10px 0 10px">API名称: </label><input id="s-apiName" class="easyui-textbox"
+                                                                           style="width:200px">
+                <label style="padding: 0 10px 0 10px">Api描述: </label><input id="s-apiDesc" class="easyui-textbox"
+                                                                             style="width:200px">
+                <a id="search" style="padding-left: 30px;" href="#" class="easyui-linkbutton"
+                   iconCls="icon-search">查询</a>
+            </div>
+        </div>
+        <div id="api-list" region="center"></div>
+    </div>
+</div>
+</body>
+</html>

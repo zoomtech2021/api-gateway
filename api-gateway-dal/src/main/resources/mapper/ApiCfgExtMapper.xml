@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiyong.gateway.dal.dao.ApiCfgExtMapper">
+    <resultMap id="ApiCfgResultMap" type="com.zhiyong.gateway.dal.domain.ApiCfgExt">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="deleted" jdbcType="INTEGER" property="deleted"/>
+        <result column="state" jdbcType="INTEGER" property="state"/>
+        <result column="creator" jdbcType="VARCHAR" property="creator"/>
+        <result column="updater" jdbcType="VARCHAR" property="updater"/>
+        <result column="api_name" jdbcType="VARCHAR" property="apiName"/>
+        <result column="api_desc" jdbcType="VARCHAR" property="apiDesc"/>
+        <result column="api_group" jdbcType="INTEGER" property="apiGroup"/>
+        <result column="api_version" jdbcType="VARCHAR" property="apiVersion"/>
+        <result column="rpc_interface" jdbcType="VARCHAR" property="rpcInterface"/>
+        <result column="rpc_method" jdbcType="VARCHAR" property="rpcMethod"/>
+        <result column="rpc_version" jdbcType="VARCHAR" property="rpcVersion"/>
+        <result column="timeout" jdbcType="INTEGER" property="timeout"/>
+        <result column="format" jdbcType="VARCHAR" property="format"/>
+        <result column="sign_type" jdbcType="VARCHAR" property="signType"/>
+        <result column="call_limit" jdbcType="INTEGER" property="callLimit"/>
+        <result column="need_login" jdbcType="INTEGER" property="needLogin"/>
+        <result column="need_auth" jdbcType="INTEGER" property="needAuth"/>
+        <result column="http_method" jdbcType="VARCHAR" property="httpMethod"/>
+        <result column="api_type" jdbcType="INTEGER" property="apiType" />
+        <result column="group_name" jdbcType="VARCHAR" property="groupName"/>
+    </resultMap>
+
+    <select id="queryApiDetail" resultMap="ApiCfgResultMap">
+        select t1.id, t1.create_time, t1.update_time, t1.deleted, t1.state, t1.creator, t1.updater, t1.api_name,
+        t1.api_desc,
+        t1.api_group, t1.api_version, t1.rpc_interface, t1.rpc_method, t1.rpc_version, t1.timeout, t1.format,
+        t1.sign_type, t1.call_limit, t1.need_login, t1.need_auth, t1.http_method, t1.api_type, t2.group_name
+        from api t1, api_group t2
+        where t1.api_group = t2.id and t1.deleted = 0
+        <if test="apiName != null and apiName != ''">
+            and t1.api_name like CONCAT('%',#{apiName},'%')
+        </if>
+        <if test="apiDesc != null and apiDesc != ''">
+            and t1.api_desc like CONCAT('%',#{apiDesc},'%')
+        </if>
+        <if test="groupId != null and groupId != -1">
+            and t1.api_group = #{groupId}
+        </if>
+        <if test="sort != null and sort != ''">
+            order by ${sort}
+        </if>
+    </select>
+</mapper>

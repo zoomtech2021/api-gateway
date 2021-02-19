@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 应用名称 -->
+    <springProperty scope="context" name="app_name" source="app_name" defaultValue="api-gateway"/>
+    <!-- 应用路径 -->
+    <springProperty scope="context" name="app_home" source="app_home"/>
+    <!-- 业务线 -->
+    <springProperty scope="context" name="business" source="business" defaultValue="saas"/>
+
+    <!-- json格式日志级别 -->
+    <springProperty scope="context" name="logging_level_json" source="logging.level.json" defaultValue="WARN"/>
+    <!-- 普通格式日志级别 -->
+    <springProperty scope="context" name="logging_level_file" source="logging.level.file" defaultValue="INFO"/>
+
+    <!-- json格式日志文件最大保留天数 -->
+    <springProperty scope="context" name="logging_history_json" source="logging.json.max-history" defaultValue="3"/>
+    <!-- 普通格式日志文件最大保留天数 -->
+    <springProperty scope="context" name="logging_history_file" source="logging.file.max-history" defaultValue="15"/>
+
+    <!-- 日志文件滚动大小阈值 -->
+    <springProperty scope="context" name="logging_file_max_size" source="logging.file.max-size" defaultValue="1024MB"/>
+    <!-- 日志输出目录 -->
+    <springProperty scope="context" name="logging_home" source="logging.file.path" defaultValue="${app_home}/logs"/>
+    <!-- Throwable的最大深度 -->
+    <springProperty scope="context" name="throwable_max_depth" source="throwable.max-depth" defaultValue="50"/>
+    <!-- Throwable字符串的最大长度 -->
+    <springProperty scope="context" name="throwable_max_length" source="throwable.max-length" defaultValue="200000"/>
+    <!-- 异步日志队列大小 -->
+    <springProperty scope="context" name="async_queue_size" source="async.queue-size" defaultValue="1024"/>
+    <!-- 当队列剩余容量小于该值时，将丢弃${async.discarding-level}及以下日志级别的日志 （0表示不丢弃日志，-1表示剩余20%则丢弃）-->
+    <springProperty scope="context" name="async_discarding_threshold" source="async.discarding-threshold" defaultValue="-1"/>
+    <!-- 当队列剩余容量小于${async.discarding-threshold}时，将丢弃该级别及以下的日志 -->
+    <springProperty scope="context" name="async_discarding_level" source="async.discarding-level" defaultValue="ALL"/>
+    <property name="log_type_common" value="common"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level --- [%thread] %logger{40} - %msg%n</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="RPC_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} - %msg%n</pattern><!-- 格式化输出 -->
+            <charset>utf8</charset> <!-- 输出编码 -->
+        </encoder>
+        <file>${logging_home}/rpc_invoke.log</file><!-- 文件存放路径 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/logs/rpc/%d{yyyy-MM-dd}.log</fileNamePattern><!-- 每天归档 -->
+            <maxHistory>7</maxHistory><!-- 日志存放周期（天） -->
+        </rollingPolicy>
+    </appender>
+
+    <logger name="RPC-DIGEST-LOGGER" level="info" additivity="false">
+        <appender-ref ref="RPC_APPENDER" />
+    </logger>
+
+    <springProfile name="!dev">
+        <root>
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="dev">
+        <root>
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+</configuration>

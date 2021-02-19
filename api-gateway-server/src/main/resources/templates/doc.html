@@ -1,0 +1,232 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>网关说明</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/doc.css"/>
+</head>
+<body>
+<h1>致用API网关</h1>
+<h2>1 目标</h2>
+<p>为企业提供统一的对外的API入口，为接入方提供标准统一的接入方式，统一解决认证、鉴权、安全、服务路由，协议转换、参数映射、流控熔断、服务监控等通用能力，同时实现后端微服务和前端接口最大限度的解耦，为企业服务稳定运行保驾护航。</p>
+<h2>2 架构</h2>
+<p><img width="800" height="500" src="/static/images/gateway-design.png" /></p>
+<h2>3 模块</h2>
+<ul>
+    <li>整个网关系统分为两部分：网关服务端和网关管理后台。</li>
+    <li>网关服务端：统一请求拦截、参数解析、服务配置加载、流控熔断、登录拦截、权限控制、远程服务调用、响应结果处理、监控统计等。</li>
+    <li>网关管理端：用户管理、应用管理、API类目管理、API管理、API出入参管理、API监控等。</li>
+</ul>
+<h2>4 接入文档</h2>
+<p>新API接入流程：<em>后端API开发  =&gt; 到网关平台发布API =&gt; 客户端调用网关API</em></p>
+<h4>4.1 客户端接入</h4>
+<p>客户端通过HTTP请求调用网关的API，调用方式：GET请求或POST请求，具体支持哪种方式由API参数类型决定。JSON格式的对象建议走POST Body方式请求。</p>
+<ul>
+    <li><strong>网关API统一服务地址</strong>：http://open.zhiyong.com/router/rest?method={method}&...  ,所有API根地址都一样。</li>
+    <li><strong>请求公共参数</strong></li>
+</ul>
+<table>
+    <thead>
+    <tr>
+        <th>参数</th>
+        <th>描述</th>
+        <th>类型</th>
+        <th>是否必填</th>
+        <th>示例</th>
+        <th>备注</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>appKey</td>
+        <td>应用标识</td>
+        <td>String</td>
+        <td>是</td>
+        <td>123113131</td>
+        <td>用于识别调用方身份</td>
+    </tr>
+    <tr>
+        <td>method</td>
+        <td>API名称</td>
+        <td>String</td>
+        <td>是</td>
+        <td>zhiyong.user.account.create</td>
+        <td>全局唯一</td>
+    </tr>
+    <tr>
+        <td>session</td>
+        <td>用户登录凭证</td>
+        <td>String</td>
+        <td>否</td>
+        <td>ADY67IU01BCA</td>
+        <td>可以用来判断用户是否已登录</td>
+    </tr>
+    <tr>
+        <td>timestamp</td>
+        <td>时间戳</td>
+        <td>String</td>
+        <td>是</td>
+        <td>2020-12-01 112303</td>
+        <td>允许客户端请求最大时间误差为10分钟</td>
+    </tr>
+    <tr>
+        <td>version</td>
+        <td>API版本号</td>
+        <td>String</td>
+        <td>是</td>
+        <td>1.0</td>
+        <td>确定调用的API版本</td>
+    </tr>
+    <tr>
+        <td>sign</td>
+        <td>签名</td>
+        <td>String</td>
+        <td>是</td>
+        <td>ETUIAGFDQPOLYTVCXZA</td>
+        <td>用于请求防篡改校验</td>
+    </tr>
+    <tr>
+        <td>DeviceId</td>
+        <td>移动设备ID</td>
+        <td>String</td>
+        <td>否</td>
+        <td>131211</td>
+        <td>客户端APP会用到</td>
+    </tr>
+    <tr>
+        <td>os</td>
+        <td>手机操作系统</td>
+        <td>String</td>
+        <td>否</td>
+        <td>Android或IOS</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>osVersion</td>
+        <td>手机操作系统版本</td>
+        <td>String</td>
+        <td>否</td>
+        <td>11.3</td>
+        <td></td>
+    </tr>
+    </tbody>
+</table>
+<ul>
+    <li><strong>请求参数</strong></li>
+</ul>
+<table>
+    <thead>
+    <tr>
+        <th>参数</th>
+        <th>描述</th>
+        <th>类型</th>
+        <th>是否必填</th>
+        <th>示例</th>
+        <th>备注</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>account</td>
+        <td>账号</td>
+        <td>String</td>
+        <td>是</td>
+        <td>admin</td>
+        <td>登录账号</td>
+    </tr>
+    <tr>
+        <td>password</td>
+        <td>密码</td>
+        <td>String</td>
+        <td>是</td>
+        <td>admin</td>
+        <td>登录密码</td>
+    </tr>
+    <tr>
+        <td>sex</td>
+        <td>性别</td>
+        <td>String</td>
+        <td>是</td>
+        <td>男</td>
+        <td>性别</td>
+    </tr>
+    </tbody>
+</table>
+<ul>
+    <li><strong>响应参数</strong></li>
+</ul>
+<table>
+    <thead>
+    <tr>
+        <th>参数</th>
+        <th>描述</th>
+        <th>类型</th>
+        <th>是否必填</th>
+        <th>示例</th>
+        <th>备注</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>requestId</td>
+        <td>请求ID</td>
+        <td>String</td>
+        <td>是</td>
+        <td>268faee051da4f47a50d268937cbcbb5</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>code</td>
+        <td>状态码</td>
+        <td>Int</td>
+        <td>是</td>
+        <td>200</td>
+        <td>200-成功 500-系统异常 403-未登录</td>
+    </tr>
+    <tr>
+        <td>msg</td>
+        <td>错误描述</td>
+        <td>String</td>
+        <td>否</td>
+        <td>无权限方法</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>data</td>
+        <td>结果对象</td>
+        <td>Object</td>
+        <td>否</td>
+        <td>true</td>
+        <td>由后台服务返回。可能是基本类型也可能是复杂对象</td>
+    </tr>
+    </tbody>
+</table>
+<h2>请求示例</h2>
+<p><code>http://open.zhiyong.com/router/rest?appKey=123113131&amp;session=ADY67IU01BCA&amp;method=zhiyong.user.account.create&amp;timestamp=2020-12-01 11:23:03 &amp;version=1.0&amp;sign=ETUIAGFDQPOLYTVCXZA&amp;account=admin&amp;password=admin&amp;sex=男</code></p>
+<p><img width="800" height="500" src="/static/images/postman.png" /></p>
+<h2>响应示例</h2>
+<p><code>{ &quot;requestId&quot;: &quot;268faee051da4f47a50d268937cbcbb5&quot;, &quot;code&quot;: 200, &quot;msg&quot;: null, &quot;data&quot;: { &quot;id&quot;: 100011 } }</code></p>
+<h2>第三方回调API地址</h2>
+<p><strong>网关回调API服务地址</strong>：http://open.zhiyong.com/router/callback/{method}?data=xxx  ,所有回调API根地址都一样。</p>
+<h2>签名算法</h2>
+<p>为了防止API调用过程中被黑客恶意篡改，调用任何一个API都需要携带签名，网关服务端会根据请求参数，对签名进行验证，签名不合法的请求将会被拒绝。网关目前支持的签名算法有三种：MD5(sign_method=md5)，HMAC_MD5(sign_method=hmac)，签名大体过程如下：</p>
+<p>对所有API请求参数（包括公共参数和业务参数，但除去sign参数和byte[]类型的参数），根据参数名称的ASCII码表的顺序排序。如：foo1, bar2, foo_bar3, foobar4排序后的顺序是bar2, foo1, foo_bar3, foobar4。
+    将排序好的参数名和参数值拼装在一起，根据上面的示例得到的结果为：bar2foo1foo_bar3foobar4。
+    把拼装好的字符串采用utf-8编码，使用签名算法对编码后的字节流进行摘要。如果使用MD5算法，则需要在拼装的字符串前后加上app的secret后，再进行摘要，如：md5(secret+bar2foo1foo_bar3foobar4+secret)；如果使用HMAC_MD5算法，则需要用app的secret初始化摘要算法后，再进行摘要，如：hmac_md5(bar2foo1foo_bar3foobar4)。
+    将摘要得到的字节流结果使用十六进制表示，如：hex(“helloworld”.getBytes(“utf-8”)) = “68656C6C6F776F726C64”
+    说明：MD5和HMAC_MD5都是128位长度的摘要算法，用16进制表示，一个十六进制的字符能表示4个位，所以签名后的字符串长度固定为32个十六进制字符。</p>
+<h2>注意事项</h2>
+<ul>
+    <li>
+        <p>所有的请求和响应数据编码皆为utf-8格式，URL里的所有参数名和参数值请做URL编码。如果请求的Content-Type是application/x-www-form-urlencoded，则HTTP Body体里的所有参数值也做URL编码。</p>
+    </li>
+    <li>
+        <p>参数名与参数值拼装起来的URL长度小于1024个字符时，可以用GET发起请求；参数类型含byte[]类型或拼装好的请求URL过长时，必须用POST发起请求。所有API都可以用POST发起请求， 但要求系统参数都放在query体中， 比如上述HTTP请求，系统参数app_key应该在queryt体，而业务参数fields可以在body体里，也可以在在query体，但推荐放body体，防止URL过长。</p>
+    </li>
+    <li>
+        <p>Post请求，简单类型的参数可以放URL中，但复杂对象参数必须放Body中，同时Content-Type需要选择application/json。</p>
+    </li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>致用网关平台-添加数据类型</title>
+    <script type="text/javascript" src="/static/jsonview/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/jsonview/jquery.json-viewer.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/jsonview/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/jsonview/jquery.json-viewer.css"/>
+</head>
+<style>
+    body {
+        background-color: #F7F7F7
+    }
+</style>
+</head>
+<body>
+<div class="container" style="margin: 10px;">
+    <div class="row">
+        <form id="typeForm">
+            <input type="hidden" id="typeId" name="id" th:value="${id==null?'':id}"/>
+            <div class="form-group">
+                <label>类型名称：</label>
+                <input type="text" class="form-control" id="typeName" placeholder="请输入名称，请以POJO-开头。例如：POJO-User-List。">
+            </div>
+            <div class="form-group">
+                <label>类型描述：</label>
+                <input type="text" class="form-control" id="typeDesc" placeholder="请输入描述，尽量描述清楚类型，方便API配置时选择类型。">
+            </div>
+            <div class="form-group">
+                <label>类型配置：</label>
+                <textarea class="form-control" id="typeJson" rows="15" style="margin-top: 20px;">
+	{
+		"name": "testModel",
+		"desc": "测试模型",
+		"type": "com.zhiyong.gateway.facade.model.TestModel",
+		"collectionType": "java.util.Map",
+		"children": [{
+			"name": "map",
+			"desc": "测试模型",
+			"type": "com.zhiyong.gateway.facade.model.TestModel"
+		}, {
+			"name": "testModels",
+			"desc": "测试模型",
+			"type": "com.zhiyong.gateway.facade.model.TestModel"
+		}, {
+			"name": "mapList",
+			"desc": "测试模型MAP",
+			"type": "com.zhiyong.gateway.facade.model.TestModel",
+			"collectionType": "java.util.Map",
+			"mapping": {
+				"*": {
+					"name": "map",
+					"desc": "测试模型",
+					"type": "com.zhiyong.gateway.facade.model.TestModel"
+				}
+			}
+		}]
+	}
+			</textarea>
+            </div>
+        </form>
+        <div class="form-group" style="padding-top: 10px;">
+            <label class="checkbox-inline">
+                <input type="checkbox" id="collapsed">
+                收缩所有的节点
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox" id="with-quotes">
+                为KEY添加双引号
+            </label>
+            <button id="btn-json-viewer" style="margin-left: 30px;" class="btn btn-info">转换</button>
+            <button class="btn btn-info" style="margin-left: 30px;" onclick="clearTypeJson()">清空</button>
+            <button class="btn btn-info" style="margin-left: 30px;" onclick="saveTypeJson()">提交</button>
+        </div>
+        <pre id="json-renderer" style="height: 300px;padding: 20px;"></pre>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        loadTypeJson();
+        $('#btn-json-viewer').click(function () {
+            try {
+                var input = eval('(' + $('#typeJson').val() + ')');
+            } catch (error) {
+                return;
+            }
+            var options = {
+                collapsed: $('#collapsed').is(':checked'),
+                withQuotes: $('#with-quotes').is(':checked')
+            };
+            $('#json-renderer').jsonViewer(input, options);
+        });
+
+        $('#typeJson').bind('input propertychange', function (e) {
+            $('#btn-json-viewer').click();
+        });
+        $('#btn-json-viewer').click();
+    });
+
+    function loadTypeJson() {
+        var typeId = $("#typeId").val();
+        if (!typeId) {
+            return;
+        }
+        $.post("/admin/getTypeJsonById.do", {id: typeId}, function (res) {
+            if (res.code != 200) {
+                $.messager.alert('提示', '对不起，类型配置信息获取失败:' + res.msg);
+                return;
+            }
+            $("#typeName").val(res.data.typeName);
+            $("#typeDesc").val(res.data.typeDesc);
+            $("#typeJson").val(res.data.typeJson);
+            $('#btn-json-viewer').click();
+        });
+    }
+
+    function clearTypeJson() {
+        $('#typeJson').empty();
+        $('#json-renderer').empty();
+    }
+
+    function saveTypeJson() {
+        var typeName = $('#typeName').val();
+        var typeDesc = $('#typeDesc').val();
+        var typeJson = $('#typeJson').val();
+        if (!typeName) {
+            alert('类型名称不能为空');
+            return;
+        }
+        if (typeName.length >= 100) {
+            alert('类型名称太长了');
+            return;
+        }
+        if (!typeDesc) {
+            alert('类型描述不能为空');
+            return;
+        }
+        if (typeDesc.length >= 100) {
+            alert('类型描述太长了');
+            return;
+        }
+        try {
+            eval('(' + typeJson + ')');
+        } catch (error) {
+            alert('输入的数据类型格式不正确，请修改后再提交');
+            return;
+        }
+        $.post("/admin/saveType.do", {
+            id: $("#typeId").val(),
+            typeName: typeName,
+            typeDesc: typeDesc,
+            typeJson: typeJson
+        }, function (res) {
+            if (res.code != 200) {
+                alert('对不起，保存数据类型失败:' + res.msg);
+                return;
+            }
+            alert('数据类型保存成功');
+            window.top["reload_type_struct_list"].call();
+            closeStructTab();
+        });
+    }
+
+    function closeStructTab() {
+        var typeId = $("#typeId").val();
+        if (!typeId) {
+            parent.$('#tabs').tabs('close', '添加类型');
+        } else {
+            parent.$('#tabs').tabs('close', '修改类型-' + typeId);
+        }
+    }
+</script>
+</body>
+</html>
