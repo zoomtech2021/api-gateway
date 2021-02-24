@@ -1,5 +1,4 @@
 target/
-cache/
 !.mvn/wrapper/maven-wrapper.jar
 **/bin/**
 
