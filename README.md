@@ -153,7 +153,7 @@ api-gateway-server
 
 ## <a name="7">环境要求</a>
 1. JDK1.8
-2. zk、nacos、redis
+2. zk、redis
 3. Mysql数据库
 
 
