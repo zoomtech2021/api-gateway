@@ -5,10 +5,11 @@
 * <a href="#2">平台介绍</a>
 * <a href="#3">平台特性</a>
 * <a href="#4">平台技术</a> 
-* <a href="#5">核心组件</a>
+* <a href="#5">核心组件</a> 
 * <a href="#6">项目结构</a>
-* <a href="#7">环境要求</a>
-* <a href="#8">运行说明</a>
+* <a href="#7">系统截图</a>
+* <a href="#8">环境要求</a>
+* <a href="#9">运行说明</a>
 
 
 ## <a name="1">平台背景</a>
@@ -149,15 +150,22 @@ api-gateway-server
             
             / — login.html                    【网关登录页面】	
 	
+## <a name="7">系统截图</a>
 
+<div><img src="https://github.com/zoomtech2021/api-gateway/raw/master/api-gateway-server/src/main/resources/static/images/网关截图1.png"/></div>
+<div><img src="https://github.com/zoomtech2021/api-gateway/raw/master/api-gateway-server/src/main/resources/static/images/网关截图2.png"/></div>
+<div><img src="https://github.com/zoomtech2021/api-gateway/raw/master/api-gateway-server/src/main/resources/static/images/网关截图3.png"/></div>
+<div><img src="https://github.com/zoomtech2021/api-gateway/raw/master/api-gateway-server/src/main/resources/static/images/网关截图4.png"/></div>
+<div><img src="https://github.com/zoomtech2021/api-gateway/raw/master/api-gateway-server/src/main/resources/static/images/网关截图5.png"/></div>
+<div><img src="https://github.com/zoomtech2021/api-gateway/raw/master/api-gateway-server/src/main/resources/static/images/网关截图6.png"/></div>
 
-## <a name="7">环境要求</a>
+## <a name="8">环境要求</a>
 1. JDK1.8
 2. zk、redis
 3. Mysql数据库
 
 
-## <a name="8">运行说明</a>
+## <a name="9">运行说明</a>
 
 * 下载项目
 * 处理以下几个核心配置
@@ -170,7 +178,9 @@ api-gateway-server
 * 运行api-gateway-server模块下的com.zhiyong.gateway.server.Application类启动项目
 * 浏览器地址栏输入:  http://localhost:19002 进入网关管理后台 账号：admin/admin123
 
-## <a name="9">平台作者</a>
+## <a name="10">平台作者</a>
 
 ### 毛军锐 VX：ybyh8899
+
+
 
